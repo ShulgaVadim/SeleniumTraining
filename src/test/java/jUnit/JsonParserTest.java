@@ -1,6 +1,5 @@
 package jUnit;
 
-import jUnit.Utils.Utils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -12,27 +11,35 @@ import shop.Cart;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static jUnit.Utils.Constants.FILE_NAME_LIST;
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class JsonParserTest {
 
-    static Cart initialCart;
-    static JsonParser parser;
+    Cart initialCart;
+    JsonParser parser;
+
+    List<String> fileNameList = Stream.of(
+            "vadim-cart",
+            "vadim1-cart",
+            "vadim2-cart")
+            .collect(Collectors.toList());
 
     @BeforeAll
-    static void setUp() {
+    void setUp() {
         parser = new JsonParser();
-        initialCart = Utils.initCart(0);
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {0})
+    @ValueSource(ints = {0, 1, 2})
     void writeToFileTest(int i) {
+        initialCart = new Cart(fileNameList.get(i));
         parser.writeToFile(initialCart);
-        Cart actualCart = parser.readFromFile(new File("src/main/resources/" + FILE_NAME_LIST.get(i) + ".json"));
+        Cart actualCart = parser.readFromFile(new File("src/main/resources/" + fileNameList.get(i) + ".json"));
         assertAll(() -> assertEquals(initialCart.getCartName(), actualCart.getCartName()),
                 () -> assertEquals(initialCart.getTotalPrice(), actualCart.getTotalPrice()));
     }
@@ -49,25 +56,28 @@ public class JsonParserTest {
     void notSuchFileExceptionTest(String path) {
         Exception exception = assertThrows(NoSuchFileException.class,
                 () -> parser.readFromFile(new File(path)));
-        assertEquals("File " + path + ".json not found!", exception.getMessage());
+        assertEquals("File " + path + ".json not found!", exception.getMessage()); //the first test should be fail because path is correct
     }
 
     static Stream<String> getPath() {
-        return Stream.of("src\\main\\resources\\vadim-cart", "vadim-cart.json", "vadim-cart", "resources\\vadim-cart", "vadim cart");
+        return Stream.of("src\\main\\resources\\andrew-cart.json", "vadim-cart.json", "vadim-cart", "resources\\vadim-cart", "vadim cart");
     }
 
     @Disabled
     @Test
     void isInstantiated() {
+        initialCart = new Cart("testCart");
         assertNotNull(initialCart);
     }
 
     @AfterAll
-    public static void tearDown() {
-        try {
-            Files.deleteIfExists(Paths.get("src/main/resources/" + initialCart.getCartName() + ".json"));
-        } catch (NoSuchFileException | IOException e) {
-            System.out.println("No such file/directory exists");
+    void tearDown() {
+        for (String fileName : fileNameList) {
+            try {
+                Files.deleteIfExists(Paths.get("src/main/resources/" + fileName + ".json"));
+            } catch (NoSuchFileException | IOException e) {
+                System.out.println("No such file/directory exists");
+            }
         }
     }
 }
