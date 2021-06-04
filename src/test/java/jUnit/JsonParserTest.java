@@ -1,5 +1,6 @@
 package jUnit;
 
+import com.google.gson.Gson;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -50,7 +51,12 @@ public class JsonParserTest {
         initialCart.addRealItem(rItem);
         initialCart.addVirtualItem(vItem);
 
-        parser.writeToFile(initialCart);
+        Gson gson = new Gson();
+        try (FileWriter writer = new FileWriter(path + extension)) {
+            writer.write(gson.toJson(initialCart));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Cart expectedCart = parser.readFromFile(new File(path + extension));
         assertEquals(initialCart.getTotalPrice(), expectedCart.getTotalPrice());
     }
