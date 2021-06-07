@@ -1,0 +1,16 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+
+<suite name="OnlineShop" verbose="1" >
+    <test name="ItemsTest" >
+        <groups>
+            <run>
+                <include name="goodTests"/>
+                <exclude name="brokenTests"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="testNg.RealItemTest"/>
+            <class name="testNg.VirtualItemTest"/>
+        </classes>
+    </test>
+</suite>
