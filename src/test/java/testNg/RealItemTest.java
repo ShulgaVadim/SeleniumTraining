@@ -7,7 +7,7 @@ import shop.RealItem;
 
 public class RealItemTest {
 
-    @Test(groups = {"goodTests"})
+    @Test(groups = {"goodTests", "itemTests"})
     void realItemTest() {
         RealItem rItem = new RealItem();
         rItem.setName("Scoda");

@@ -1,16 +1,24 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
 
-<suite name="OnlineShop" verbose="1" >
-    <test name="ItemsTest" >
+<suite name="OnlineShop" verbose="1">
+    <test name="TestJustForExample">
         <groups>
+            <define name="SuperGroup">
+                <include name="goodTests"></include>
+                <include name="itemTests"></include>
+            </define>
             <run>
-                <include name="goodTests"/>
-                <exclude name="brokenTests"/>
+                <include name="SuperGroup"></include>
             </run>
         </groups>
         <classes>
             <class name="testNg.RealItemTest"/>
             <class name="testNg.VirtualItemTest"/>
+            <class name="testNg.JsonParserTest">
+                <methods>
+                    <include name="readFromFileTest"/>
+                </methods>
+            </class>
         </classes>
     </test>
 </suite>

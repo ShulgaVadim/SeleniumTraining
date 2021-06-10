@@ -1,9 +1,6 @@
 package testNg;
 
 import com.google.gson.Gson;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import org.testng.annotations.Test;
@@ -30,20 +27,20 @@ public class JsonParserTest {
     Path path = Paths.get("src", "main", "resources", cartName);
 
 
-    @BeforeClass
+    @BeforeClass(alwaysRun = true)
     void setUp() {
         initialCart = new Cart(cartName);
     }
 
-    @Test(enabled=false, groups = {"goodTests"})
+    @Test(enabled = false, groups = {"goodTests"})
     void writeToFileTest() {
         parser.writeToFile(initialCart);
         Assert.assertTrue(Files.exists(Paths.get(path + extension)));
     }
 
-    @Parameters ({"realItemPrice", "virtItemPrice"})
+    @Parameters({"realItemPrice", "virtItemPrice"})
     @Test(groups = {"goodTests"})
-    public void readFromFileTest(double realItemPrice, double virtItemPrice) {
+    public void readFromFileTest(@Optional("5000") double realItemPrice, @Optional("2000") double virtItemPrice) {
         VirtualItem vItem = new VirtualItem();
         vItem.setPrice(virtItemPrice);
 
@@ -79,7 +76,7 @@ public class JsonParserTest {
                 {".json"}};
     }
 
-    @AfterTest
+    @AfterTest(alwaysRun = true)
     void tearDown() {
         try {
             Files.deleteIfExists(Paths.get(path + extension));
