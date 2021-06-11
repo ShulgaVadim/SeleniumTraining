@@ -1,0 +1,17 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+
+<suite name="OnlineShop" verbose="1" >
+    <parameter name="realItemPrice" value="50.40"/>
+    <parameter name="virtItemPrice" value="17500.55"/>
+    <test name="JsonParserTest" >
+        <groups>
+            <run>
+                <include name="goodTests"/>
+                <exclude name="brokenTests"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="testNg.JsonParserTest"/>
+        </classes>
+    </test>
+</suite>

@@ -1,24 +1,23 @@
-package jUnit;
+package testNg;
 
 import com.google.gson.Gson;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.ParameterizedTest;
-
-import org.junit.jupiter.params.provider.ValueSource;
+import org.testng.Assert;
+import org.testng.annotations.*;
+import org.testng.annotations.Test;
 import parser.JsonParser;
 import parser.NoSuchFileException;
 import shop.Cart;
 import shop.RealItem;
 import shop.VirtualItem;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.*;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class JsonParserTest {
 
     public Cart initialCart;
@@ -28,25 +27,25 @@ public class JsonParserTest {
     Path path = Paths.get("src", "main", "resources", cartName);
 
 
-    @BeforeAll
+    @BeforeClass(alwaysRun = true)
     void setUp() {
         initialCart = new Cart(cartName);
     }
 
-    @Disabled
-    @Test
+    @Test(enabled = false, groups = {"goodTests"})
     void writeToFileTest() {
         parser.writeToFile(initialCart);
-        assertTrue(Files.exists(Paths.get(path + extension)));
+        Assert.assertTrue(Files.exists(Paths.get(path + extension)));
     }
 
-    @Test
-    public void readFromFileTest() {
+    @Parameters({"realItemPrice", "virtItemPrice"})
+    @Test(groups = {"goodTests"})
+    public void readFromFileTest(@Optional("5000") double realItemPrice, @Optional("2000") double virtItemPrice) {
         VirtualItem vItem = new VirtualItem();
-        vItem.setPrice(50.40);
+        vItem.setPrice(virtItemPrice);
 
         RealItem rItem = new RealItem();
-        rItem.setPrice(17500.55);
+        rItem.setPrice(realItemPrice);
 
         initialCart.addRealItem(rItem);
         initialCart.addVirtualItem(vItem);
@@ -58,19 +57,26 @@ public class JsonParserTest {
             e.printStackTrace();
         }
         Cart expectedCart = parser.readFromFile(new File(path + extension));
-        assertEquals(initialCart.getTotalPrice(), expectedCart.getTotalPrice());
+        Assert.assertEquals(initialCart.getTotalPrice(), expectedCart.getTotalPrice());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {".txt", ".xml", ".docx", ".xlsx", ".json"})
+    @Test(expectedExceptions = NoSuchFileException.class, dataProvider = "extensions for notSuchFileExceptionTest", groups = {"brokenTests"})
     void notSuchFileExceptionTest(String extension) {
         parser.writeToFile(initialCart);
-        Exception exception = assertThrows(NoSuchFileException.class,
-                () -> parser.readFromFile(new File(path + extension)));
-        assertEquals("File " + path + extension + " not found!", exception.getMessage());
+        parser.readFromFile(new File(path + extension));
     }
 
-    @AfterEach
+    @DataProvider(name = "extensions for notSuchFileExceptionTest")
+    public Object[][] dataProviderMethod() {
+        return new Object[][]{
+                {".txt"},
+                {".xml"},
+                {".docx"},
+                {".xlsx"},
+                {".json"}};
+    }
+
+    @AfterTest(alwaysRun = true)
     void tearDown() {
         try {
             Files.deleteIfExists(Paths.get(path + extension));
@@ -79,3 +85,4 @@ public class JsonParserTest {
         }
     }
 }
+
