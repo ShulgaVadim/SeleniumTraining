@@ -6,15 +6,14 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import yandex.pages.YandexMailPage;
 
-
 import java.util.concurrent.TimeUnit;
 
 public class YandexMailPageTest {
 
     WebDriver driver;
     public YandexMailPage yandexMailPage;
-    public final static String USERNAME = "seleniumtests@tut.by";
-    public final static String PASSWORD = "123456789zxcvbn";
+    private final static String USERNAME = "seleniumtests@tut.by";
+    private final static String PASSWORD = "123456789zxcvbn";
 
     @BeforeAll
     public static void setupDriver() {
@@ -33,8 +32,8 @@ public class YandexMailPageTest {
     public void correctLoginTest() {
         yandexMailPage
                 .openPage()
-                .login(USERNAME, PASSWORD);
-        Assertions.assertEquals(driver.getCurrentUrl(), "https://passport.yandex.by/profile");
+                .login(USERNAME, PASSWORD)
+                .userShouldBeAuthorized();
     }
 
     @AfterEach
