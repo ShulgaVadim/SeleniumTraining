@@ -3,6 +3,7 @@ package yandex.pages;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class YandexMailPage {
@@ -22,7 +23,7 @@ public class YandexMailPage {
 
     public YandexMailPage(WebDriver driver) {
         this.driver = driver;
-        wait = new WebDriverWait(driver, 20);
+        wait = new WebDriverWait(driver, 12);
     }
 
     public YandexMailPage openPage() {
@@ -30,11 +31,21 @@ public class YandexMailPage {
         return this;
     }
 
-    public YandexMailPage login(String username, String password) {
+    public YandexMailPage login(String username, String password){
         driver.findElement(USERNAME_INPUT).sendKeys(username);
         driver.findElement(ENTER_BUTTON).submit();
         driver.findElement(PASSWORD_INPUT).sendKeys(password);
         driver.findElement(ENTER_BUTTON).submit();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(ACCOUNT_NAME));
+        return this;
+    }
+    public YandexMailPage loginWithParameters(String username, String password) throws InterruptedException {
+        driver.findElement(USERNAME_INPUT).sendKeys(username);
+        driver.findElement(ENTER_BUTTON).submit();
+        Thread.sleep(2000);//Thread.sleep doesn't belong to any type of waiters (Implicit and Explicit)
+        driver.findElement(PASSWORD_INPUT).sendKeys(password);
+        driver.findElement(ENTER_BUTTON).submit();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(ACCOUNT_NAME));
         return this;
     }
 
