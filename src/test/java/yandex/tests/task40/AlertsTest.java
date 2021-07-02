@@ -9,46 +9,43 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 public class AlertsTest {
-    public WebDriver driver = new ChromeDriver();;
-    public String URL = "https://www.seleniumeasy.com/test/javascript-alert-box-demo.html";
+    private WebDriver driver = new ChromeDriver();;
+    private static final String URL = "https://www.seleniumeasy.com/test/javascript-alert-box-demo.html";
 
     @BeforeAll
     public static void setupDriver() {
         WebDriverManager.chromedriver().setup();
     }
 
-    @Test
-    public void confirmAlertBox(){
+    @BeforeEach
+    public void openPage() {
         driver.get(URL);
-        WebElement clickMeButton = driver.findElement(By.xpath("//button[@onclick='myAlertFunction()']"));
-        clickMeButton.click();
-        Alert alert = driver.switchTo().alert();
-        String alertText = alert.getText();
-        alert.accept();
-        Assertions.assertEquals("I am an alert box!", alertText);
     }
 
     @Test
-    public void confirmAlertConfirmBox(){
-        driver.get(URL);
+    public void verifyAlertTextTest(){
+        WebElement clickMeButton = driver.findElement(By.xpath("//button[@onclick='myAlertFunction()']"));
+        clickMeButton.click();
+        Alert alert = driver.switchTo().alert();
+        Assertions.assertEquals("I am an alert box!", alert.getText());
+    }
+
+    @Test
+    public void confirmAlertConfirmBoxTest(){
         WebElement clickMeButton = driver.findElement(By.xpath("//button[@onclick='myConfirmFunction()']"));
         clickMeButton.click();
         Alert alert = driver.switchTo().alert();
         alert.accept();
-        WebElement confirmMessage = driver.findElement(By.id("confirm-demo"));
-        Assertions.assertEquals("You pressed OK!", confirmMessage.getText());
+        Assertions.assertEquals("You pressed OK!", driver.findElement(By.id("confirm-demo")).getText());
     }
 
     @Test
-    public void dismissAlertConfirmBox(){
-        driver.get(URL);
+    public void dismissAlertConfirmBoxTest(){
         WebElement clickMeButton = driver.findElement(By.xpath("//button[@onclick='myConfirmFunction()']"));
         clickMeButton.click();
         Alert alert = driver.switchTo().alert();
         alert.dismiss();
-        WebElement confirmMessage = driver.findElement(By.id("confirm-demo"));
-
-        Assertions.assertEquals("You pressed Cancel!", confirmMessage.getText());
+        Assertions.assertEquals("You pressed Cancel!", driver.findElement(By.id("confirm-demo")).getText());
     }
 
     @AfterEach

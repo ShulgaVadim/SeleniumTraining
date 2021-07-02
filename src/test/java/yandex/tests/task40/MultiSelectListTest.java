@@ -6,22 +6,17 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Action;
-import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.Select;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.*;
 
 public class MultiSelectListTest {
 
-    public WebDriver driver = new ChromeDriver();
-    public String URL = "https://www.seleniumeasy.com/test/basic-select-dropdown-demo.html";
+    private WebDriver driver = new ChromeDriver();
+    private static final String URL = "https://www.seleniumeasy.com/test/basic-select-dropdown-demo.html";
 
     @BeforeAll
     public static void setupDriver() {
@@ -31,29 +26,22 @@ public class MultiSelectListTest {
     @Test
     public void multiSelectTest() {
         driver.get(URL);
-        Actions actions = new Actions(driver);
-        WebElement multiSelectDemo = driver.findElement(By.id("multi-select"));
-        List<WebElement> options = multiSelectDemo.findElements(By.tagName("option"));
-        Action multipleSelect = actions.keyDown(Keys.CONTROL)
-                .click(options.get(1))
-                .click(options.get(4))
-                .click(options.get(6))
-                .build();
-        multipleSelect.perform();
+        WebElement selectElement = driver.findElement(By.id("multi-select"));
+        Select select = new Select(selectElement);
+        select.selectByValue("California");
+        select.selectByValue("Ohio");
+        select.selectByValue("Texas");
 
-        List<String> cities = new ArrayList<>();
-        for (int i = 0; i <= options.size() - 1; i++) {
-            if (options.get(i).isSelected()) {
-                cities.add(options.get(i).getText());
-            }
+        List<WebElement> selectedOptions = select.getAllSelectedOptions();
+        List<String> expectedCities = new ArrayList<>();
+        for (WebElement selectedOption : selectedOptions) {
+            expectedCities.add(selectedOption.getText());
         }
+        ArrayList<String> actualCities = new ArrayList<>(Arrays.asList("California", "Ohio", "Texas"));
 
-        Assertions.assertAll(
-                () -> assertEquals(options.get(1).getText(), cities.get(0)),
-                () -> assertEquals(options.get(4).getText(), cities.get(1)),
-                () -> assertEquals(options.get(6).getText(), cities.get(2))
-        );
+        Assertions.assertEquals(expectedCities, actualCities);
     }
+
 
     @AfterEach
     public void closeBrowser() {

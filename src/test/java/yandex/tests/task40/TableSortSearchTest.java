@@ -1,10 +1,8 @@
 package yandex.tests.task40;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.By;
@@ -17,8 +15,9 @@ import java.util.List;
 
 public class TableSortSearchTest {
 
-    public WebDriver driver = new ChromeDriver();
-    public String URL = "https://www.seleniumeasy.com/test/table-sort-search-demo.html";
+    private WebDriver driver = new ChromeDriver();
+    private static final String URL = "https://www.seleniumeasy.com/test/table-sort-search-demo.html";
+    private String headerPattern = "//table//th[normalize-space()='%s']/preceding-sibling::th";
 
     @BeforeAll
     public static void setupDriver() {
@@ -27,48 +26,37 @@ public class TableSortSearchTest {
 
     @ParameterizedTest
     @CsvSource({"35, 350000.00"})
-    public void tableSortSearchTest(Integer minAge, Double maxSalary) {
+    public void tableSortSearchTest(int minAge, double maxSalary) {
         driver.get(URL);
         Select dropdown = new Select(driver.findElement(By.xpath("//select[@name='example_length']")));
-        dropdown.selectByIndex(0);
+        dropdown.selectByValue("10");
         List<Employee> employees = getData(minAge, maxSalary);
         employees.stream().forEach(System.out::println);
     }
 
-    private List<Employee> getData(Integer minAge, Double maxSalary) {
+    private List<Employee> getData(int minAge, double maxSalary) {
         List<Employee> employees = new ArrayList<>();
-        String tableCellPattern = "//table[@id='example']//tbody/tr[%s]/td[%s]";
-        int numOfRow = driver.findElements(By.xpath("//table[@id='example']//tbody/tr")).size();
-        int numOfCell = driver.findElements(By.xpath("//table[@id='example']//th")).size();
-        for (int iRow = 1; iRow <= numOfRow; iRow++) {
-            String employeeName = null, employeePosition = null, employeeOffice = null;
-            Integer age = null;
-            Double salary = null;
-            for (int iCell = 1; iCell <= numOfCell; iCell++) {
-                switch (iCell) {
-                    case 1:
-                        employeeName = driver.findElement(By.xpath(String.format(tableCellPattern, iRow, iCell))).getText();
-                        break;
-                    case 2:
-                        employeePosition = driver.findElement(By.xpath(String.format(tableCellPattern, iRow, iCell))).getText();
-                        break;
-                    case 3:
-                        employeeOffice = driver.findElement(By.xpath(String.format(tableCellPattern, iRow, iCell))).getText();
-                        break;
-                    case 4:
-                        age = Integer.valueOf(driver.findElement(By.xpath(String.format(tableCellPattern, iRow, iCell))).getText());
-                        break;
-                    case 6:
-                        String text = driver.findElement(By.xpath(String.format(tableCellPattern, iRow, iCell))).getText();
-                        salary = Double.valueOf(text.replaceAll("[^0-9]", ""));
-                        break;
-                }
-            }
-            if (age > minAge && salary <= maxSalary) {
+        int numOfRows = driver.findElements(By.xpath("//table[@id='example']//tbody/tr")).size();
+        for (int i = 1; i <= numOfRows; i++) {
+            String employeeName = findTableCellValue(i, findHeaderPosition("Name"));
+            String employeeOffice = findTableCellValue(i, findHeaderPosition("Office"));
+            String employeePosition = findTableCellValue(i, findHeaderPosition("Position"));
+            int employeeAge = Integer.parseInt(findTableCellValue(i, findHeaderPosition("Age")));
+            double employeeSalary = Double.parseDouble(findTableCellValue(i, findHeaderPosition("Salary")).replaceAll("[^0-9]", ""));
+
+            if (employeeAge > minAge && employeeSalary <= maxSalary) {
                 employees.add(new Employee(employeeName, employeePosition, employeeOffice));
             }
         }
         return employees;
+    }
+
+    private Integer findHeaderPosition(String headerName) {
+        return driver.findElements(By.xpath(String.format(headerPattern, headerName))).size() + 1;
+    }
+
+    private String findTableCellValue(Integer rowIndex, Integer headerIndex) {
+        return driver.findElement(By.xpath(String.format("//table[@id='example']//tbody/tr[%d]/td[%d]", rowIndex, headerIndex))).getText();
     }
 
 
