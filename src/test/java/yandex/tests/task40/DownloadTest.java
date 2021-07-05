@@ -20,6 +20,7 @@ public class DownloadTest {
 
     private WebDriver driver = new ChromeDriver();
     private static final String URL = "https://www.seleniumeasy.com/test/bootstrap-download-progress-demo.html";
+    private final By loadingElement = By.className("percenttext");
     private Wait<WebDriver> wait = new FluentWait<>(driver)
             .withTimeout(Duration.ofSeconds(20))
             .pollingEvery(Duration.ofMillis(100))
@@ -34,16 +35,14 @@ public class DownloadTest {
     public void downloadTest() {
         driver.get(URL);
         driver.findElement(By.id("cricle-btn")).click();
-        WebElement percentage = driver.findElement(By.className("percenttext"));
 
-// Tried to refactor this method with parsing percentage to int, but int number always equals 0. Code is below
-//        int number = Integer.parseInt(percentage.getText().replace("%", ""));
-//        while (number < 50) {
-//            System.out.println(number);
-//        }
-
-        wait.until(ExpectedConditions.textToBePresentInElement(percentage, "50%"));
-        driver.navigate().refresh();
+        while (!driver.findElement(loadingElement).getText().equals("100%")) {
+            int percent = Integer.parseInt(driver.findElement(loadingElement).getText().replaceAll("%", ""));
+            if (percent >= 50) {
+                driver.navigate().refresh();
+                return;
+            }
+        }
     }
 
     @AfterEach

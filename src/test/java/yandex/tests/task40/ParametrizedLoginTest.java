@@ -2,6 +2,7 @@ package yandex.tests.task40;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,6 +39,8 @@ public class ParametrizedLoginTest {
     @MethodSource("provideCredentials")
     public void loginWithParametersTest(String username, String password) {
         accountPage = yandexAuthPage.login(username, password);
+        String accountName = accountPage.getAccountName();
+        Assertions.assertEquals(username, accountName);
     }
 
     private static Stream<Arguments> provideCredentials() {

@@ -16,4 +16,8 @@ public class AccountPage {
         new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(ACCOUNT_NAME));
     }
 
+    public String getAccountName() {
+        return driver.findElement(ACCOUNT_NAME).getText();
+    }
+
 }
