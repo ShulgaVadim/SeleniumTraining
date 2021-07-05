@@ -4,14 +4,16 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import yandex.pages.YandexMailPage;
+import yandex.pages.AccountPage;
+import yandex.pages.YandexAuthPage;
 
 import java.util.concurrent.TimeUnit;
 
 public class YandexMailPageTest {
 
-    WebDriver driver;
-    public YandexMailPage yandexMailPage;
+    private WebDriver driver;
+    private YandexAuthPage yandexAuthPage;
+    private AccountPage accountPage;
     private final static String USERNAME = "seleniumtests@tut.by";
     private final static String PASSWORD = "123456789zxcvbn";
 
@@ -25,15 +27,12 @@ public class YandexMailPageTest {
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         driver.manage().window().maximize();
-        yandexMailPage = new YandexMailPage(driver);
+        yandexAuthPage = new YandexAuthPage(driver);
     }
 
     @Test
     public void correctLoginTest() {
-        yandexMailPage
-                .openPage()
-                .login(USERNAME, PASSWORD)
-                .userShouldBeAuthorized();
+        accountPage = yandexAuthPage.login(USERNAME, PASSWORD);
     }
 
     @AfterEach
