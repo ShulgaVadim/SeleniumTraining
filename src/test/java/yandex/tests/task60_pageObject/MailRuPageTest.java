@@ -38,7 +38,7 @@ public class MailRuPageTest {
 
     @Test
     public void correctLoginTest() {
-        mailRuAccountPage= mailRuMainPage.login(USERNAME, PASSWORD);
+        mailRuAccountPage = mailRuMainPage.login(USERNAME, PASSWORD);
     }
 
     @Test
@@ -48,7 +48,8 @@ public class MailRuPageTest {
                 .openMenu();
         accountMenuModal
                 .logOut();
-
+        mailRuMainPage
+                .logoIsAppeared();
     }
 
     @AfterEach
