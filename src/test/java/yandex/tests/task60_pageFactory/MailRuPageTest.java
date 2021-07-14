@@ -1,10 +1,7 @@
 package yandex.tests.task60_pageFactory;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import yandex.pages.task60_PageFactory.AccountMenuModal;
@@ -21,6 +18,7 @@ public class MailRuPageTest {
     private AccountMenuModal accountMenuModal;
     private final static String USERNAME = "seleniumtests";
     private final static String PASSWORD = "OYAY43rtpty$";
+    private static final String URL = "https://mail.ru/";
 
     @BeforeAll
     public static void setupDriver() {
@@ -30,26 +28,29 @@ public class MailRuPageTest {
     @BeforeEach
     public void setUp() {
         driver = new ChromeDriver();
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.manage().window().maximize();
         mailRuMainPage = new MailRuMainPage(driver);
         accountMenuModal = new AccountMenuModal(driver);
+        mailRuAccountPage = new MailRuAccountPage(driver);
+        driver.get(URL);
     }
 
     @Test
     public void correctLoginTest() {
         mailRuAccountPage = mailRuMainPage.login(USERNAME, PASSWORD);
+        Assertions.assertEquals(USERNAME + "@mail.ru", mailRuAccountPage.getAccountName());
     }
 
     @Test
     public void logOutTest() {
-        correctLoginTest();
+        mailRuMainPage
+                .login(USERNAME, PASSWORD);
         mailRuAccountPage
                 .openMenu();
         accountMenuModal
                 .logOut();
-        mailRuMainPage
-                .logoIsAppeared();
+        Assertions.assertTrue(mailRuMainPage.logoIsAppeared());
     }
 
     @AfterEach

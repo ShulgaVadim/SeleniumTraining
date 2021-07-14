@@ -10,16 +10,16 @@ public class AccountMenuModal {
     private WebDriver driver;
 
     @FindBy(xpath = "//a[contains(@href,'logout')]")
-    private WebElement logoutButton;
+    private WebElement logOutButton;
 
 
     public AccountMenuModal(WebDriver driver) {
         this.driver = driver;
-        PageFactory.initElements(this.driver, this);
+        PageFactory.initElements(driver, this);
     }
 
     public MailRuMainPage logOut() {
-        logoutButton.click();
+        logOutButton.click();
         return new MailRuMainPage(driver);
     }
 }
