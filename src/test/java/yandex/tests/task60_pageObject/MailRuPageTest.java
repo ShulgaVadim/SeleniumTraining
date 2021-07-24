@@ -11,10 +11,6 @@ import yandex.pages.task60_pageObject.MailRuAccountPage;
 import yandex.pages.task60_pageObject.MailRuMainPage;
 import yandex.tests.wevdriver.WebDriverSingleton;
 
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MyTestWatcher.class)
 public class MailRuPageTest {
@@ -27,9 +23,6 @@ public class MailRuPageTest {
     private final static String USERNAME = "seleniumtests";
     private final static String PASSWORD = "OYAY43rtpty$";
     private static final String URL = "https://mail.ru/";
-    String timestamp = new SimpleDateFormat("yyyy_MM_dd__hh_mm_ss").format(new Date());
-    String folderForScreenshots = Paths.get("target", "screen" + timestamp + ".jpg").toString();
-    private MyTestWatcher myTestWatcher = new MyTestWatcher();
 
     @BeforeEach
     public void setUp() {
@@ -45,7 +38,6 @@ public class MailRuPageTest {
     @Description("1. Login test with correct credentials")
     public void correctLoginTest() {
         mailRuAccountPage = mailRuMainPage.login(USERNAME, PASSWORD);
-//        screenShot.takeSnapShot(driver, folderForScreenshots);
         Assertions.assertEquals(USERNAME + "@mail.ru", mailRuAccountPage.getAccountName());
     }
 
@@ -54,7 +46,6 @@ public class MailRuPageTest {
     public void logOutTest() {
         mailRuMainPage
                 .login(USERNAME, PASSWORD);
-//        screenShot.takeSnapShot(driver, folderForScreenshots);
         mailRuAccountPage
                 .openMenu();
         accountMenuModal
@@ -62,7 +53,7 @@ public class MailRuPageTest {
         Assertions.assertTrue(mailRuMainPage.logoIsAppeared());
     }
 
-    @AfterEach
+    @AfterAll
     public void closeBrowser() {
         if (driver != null) {
             WebDriverSingleton.closeBrowser();

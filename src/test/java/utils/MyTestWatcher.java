@@ -29,9 +29,9 @@ public class MyTestWatcher implements TestWatcher {
 
     @Override
     public void testFailed(ExtensionContext extensionContext, Throwable e) {
-        log.info("Test Disabled for test {}: with reason :- {}",
-                extensionContext.getDisplayName());
-        takeScreenshot();
+        log.info("Test Failed for test {}: with reason :- {}",
+                extensionContext.getDisplayName(), extensionContext.getExecutionException());
+        takeScreenshot(extensionContext.getDisplayName());
     }
 
     @Override
@@ -39,8 +39,8 @@ public class MyTestWatcher implements TestWatcher {
         log.info("Test Successful for test {}: ", extensionContext.getDisplayName());
     }
 
-    @Attachment(value = "Page Screenshot", type = "image/png")
-    public static byte[] takeScreenshot() {
+    @Attachment(value = "{name}", type = "image/png")
+    public static byte[] takeScreenshot(String name) {
         return ((TakesScreenshot)WebDriverSingleton.getInstance()).getScreenshotAs(OutputType.BYTES);
     }
 }
