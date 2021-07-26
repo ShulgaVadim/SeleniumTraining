@@ -54,7 +54,7 @@ public class MailRuPageTest {
     }
 
     @AfterAll
-    public void closeBrowser() {
+    public void tearDown() {
         if (driver != null) {
             WebDriverSingleton.closeBrowser();
         }

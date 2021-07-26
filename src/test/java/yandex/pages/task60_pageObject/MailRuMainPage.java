@@ -9,8 +9,7 @@ public class MailRuMainPage {
     private static final By PASSWORD_INPUT = By.name("password");
     private static final By ENTER_PASSWORD_BUTTON = By.cssSelector("[data-testid='enter-password']");
     private static final By ENTER_BUTTON = By.cssSelector("[data-testid='login-to-mail']");
-    //TODO fix locator below. It is broken for demo purposes only
-    public static final By LOGO = By.cssSelector(("[daasdasdadasdta-testid='logo-item']"));
+    public static final By LOGO = By.cssSelector(("[data-testid='logo-item']"));
 
     public MailRuMainPage(WebDriver driver) {
         this.driver = driver;
@@ -28,4 +27,3 @@ public class MailRuMainPage {
         return driver.findElement(LOGO).isDisplayed();
     }
 }
-
