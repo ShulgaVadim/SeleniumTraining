@@ -24,8 +24,6 @@ public class MailRuMainPage {
     }
 
     public boolean logoIsAppeared() {
-        boolean isAppeared = driver.findElement(LOGO).isDisplayed();
-        return isAppeared;
+        return driver.findElement(LOGO).isDisplayed();
     }
 }
-
