@@ -41,6 +41,6 @@ public class MyTestWatcher implements TestWatcher {
 
     @Attachment(value = "{name}", type = "image/png")
     public static byte[] takeScreenshot(String name) {
-        return ((TakesScreenshot)WebDriverSingleton.getInstance()).getScreenshotAs(OutputType.BYTES);
+        return ((TakesScreenshot) WebDriverSingleton.getInstance()).getScreenshotAs(OutputType.BYTES);
     }
 }
